@@ -1,0 +1,9 @@
+version: '3.8' # Docker compose version
+
+services:
+  # =============== Our Nest app ===============
+  nest_app:
+    build:
+      context: ../
+      dockerfile: ./docker/Dockerfile
+      target: production

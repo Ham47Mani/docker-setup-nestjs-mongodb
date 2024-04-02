@@ -1,0 +1,41 @@
+version: '3' # Docker compose version
+
+services:
+  # =============== Our Nest app ===============
+  nest_app:
+    container_name: nest-app # Container name
+    ports:
+      # Local & container ports for nest app
+      - "3000:3000"
+    environment:
+      # Environment Variables
+      - DATABASE_URL=mongodb://root:root@mongo:27017/mongodb_db?authSource=admin
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+    depends_on:
+      # Wait until depending app running
+      - mongo
+    volumes:
+      - ../src:/usr/src/app/src:ro # Using Hot-Reload
+      # Ensures that the node_modules directory is kept intact inside the container.
+      - /usr/src/app/node_modules
+
+  # =============== Our Postgres db ===============
+  mongo:
+    image: mongo # Mongo latest images
+    container_name: mongodb
+    restart: always
+    ports:
+      # Local & container ports for postgres db
+      - "27017:27017"
+      - "127.0.0.1:27018:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=mongodb_db
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes:
+      - mongodb_data:/data/db
+
+# Create volumes
+volumes:
+  mongodb_data:
